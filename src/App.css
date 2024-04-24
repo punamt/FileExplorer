@@ -3,10 +3,10 @@
 .folder {
   margin-top: 5px;
   background-color: beige;
-  width: 300px;
+  width: 400px;
   margin-left: 10px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   cursor: pointer;
   padding: 2px;
 }

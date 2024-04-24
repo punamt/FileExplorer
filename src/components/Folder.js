@@ -1,8 +1,9 @@
 import React, { useState, } from 'react'
 
-const Folder = ({ handleInsertNode, explorer }) => {
+const Folder = ({handleDeleteNode,  handleRenameNode,  handleInsertNode, explorer }) => {
     const [expand, setExpand] = useState(false)
     const [showInput, setShowInput] = useState({ visible:false, isFolder:false })
+    const [rename, setRename] = useState(false)
     
     const handleNewFolder = (e, isFolder) => {
          e.stopPropagation()
@@ -14,13 +15,40 @@ const Folder = ({ handleInsertNode, explorer }) => {
             
         handleInsertNode(explorer.id, e.target.value, showInput.isFolder)
         setShowInput({...showInput, visible:false})
+      
         }
     }
+
+    const handleRename = (e) => {
+      e.stopPropagation()
+      setRename(!rename)
+    }
+
+    const handleChange = (e) => {
+        e.stopPropagation()
+        if(e.keyCode === 13 && e.target.value){
+            handleRenameNode(explorer.id, e.target.value, showInput.isFolder)
+            setRename(false)
+            }
+    }
+
+    const handleDelete = (e )=> {
+        e.stopPropagation()
+        handleDeleteNode(explorer.id)
+     }
+   
+     console.log(explorer.id)
+
     return (
         <div>
-            {explorer.isFolder ? <div>
+            {explorer.id &&
+            (explorer.isFolder ? <div>
                 <div className="folder" onClick={() => setExpand(!expand)}>
-                    <span>📁{explorer.name}</span>
+                    {rename ? <input type="text"  autoFocus  onKeyDown={(e) => handleChange(e)} /> :<span>📁{explorer.name}</span>}
+                    <div>
+                        <button onClick={(e) => handleRename(e)}>🔰</button>
+                        <button onClick={(e) => handleDelete(e)}>❎</button>
+                    </div>
                     <div>
                         <button onClick={(e) => handleNewFolder(e, true)}>Folder +</button>
                         <button onClick={(e) => handleNewFolder(e, false)}>File +</button>
@@ -40,13 +68,16 @@ const Folder = ({ handleInsertNode, explorer }) => {
                             </div>
                         }
                     </div>
-                    {explorer.items.map(exp => <Folder explorer={exp} key={exp.id} handleInsertNode={handleInsertNode} />)}
+                    {explorer.items && explorer.items.map(exp => <Folder explorer={exp} key={exp.id} handleInsertNode={handleInsertNode} handleRenameNode={handleRenameNode} handleDeleteNode={handleDeleteNode} />)}
 
 
                 </div>
             </div>
                 :
-                <div>📃{explorer.name}</div>
+                <div>📃{rename ? <input type="text"  autoFocus  onKeyDown={(e) => handleChange(e)} /> : explorer.name}
+                <button onClick={(e) => handleRename(e, explorer.isFolder)}>🔰</button>
+                <button onClick={(e) => handleDelete(e)}>❎</button>
+                </div>)
             }
         </div>
     )
